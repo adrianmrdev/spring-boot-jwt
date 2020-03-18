@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,6 +44,7 @@ import com.bolsadeideas.springboot.app.models.entity.Cliente;
 import com.bolsadeideas.springboot.app.models.service.IClienteService;
 import com.bolsadeideas.springboot.app.models.service.IUploadFileService;
 import com.bolsadeideas.springboot.app.util.paginator.PageRender;
+import com.bolsadeideas.springboot.app.view.xml.ClienteList;
 
 @Controller
 @SessionAttributes("cliente")
@@ -94,7 +96,7 @@ public class ClienteController {
 		return "ver";
 
 	}
-
+	
 	@GetMapping({ "/listar", "/" })
 	public String listar(@RequestParam(name = "page", defaultValue = "0") int page, Model model,
 			Authentication authentication, HttpServletRequest request, Locale locale) {
@@ -144,6 +146,12 @@ public class ClienteController {
 		return "listar";
 	}
 
+	@GetMapping("/listar-rest")
+	public @ResponseBody ClienteList listarRest() {
+		// Utilizamos clase wapper ClienteList para poder devolver XML (lo hará por defecto)
+		return new ClienteList(clienteService.findAll());
+	}
+	
 	@Secured("ROLE_ADMIN")
 	@GetMapping("/form")
 	public String crear(Map<String, Object> model) {
